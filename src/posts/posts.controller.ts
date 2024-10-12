@@ -1,17 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 
-interface IPost {
+interface PostModel {
+  id: number;
   author: string;
   title: string;
   content: string;
@@ -19,38 +10,63 @@ interface IPost {
   commentCount: number;
 }
 
+const posts: PostModel[] = [
+  {
+    id: 1,
+    author: 'newjeans_official',
+    title: '뉴진스 민지',
+    content: '메이크업 고치는 민지',
+    likeCount: 11111,
+    commentCount: 123124,
+  },
+  {
+    id: 2,
+    author: 'newjeans_official',
+    title: '뉴진스 해린',
+    content: '노래연습하는 해린',
+    likeCount: 111,
+    commentCount: 13124,
+  },
+  {
+    id: 3,
+    author: 'blackpink_official',
+    title: '블랙핑크 로제',
+    content: '춤추는 로제',
+    likeCount: 1131,
+    commentCount: 131124,
+  },
+];
+
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
-  }
-
+  /**
+   * @method GET /posts
+   *  모든 posts를 다 가져온다.
+   */
   @Get()
-  getPost(): IPost {
-    return {
-      author: 'newjeans_ofiicial',
-      title: '뉴진스 민지',
-      content: '민지가 민지',
-      likeCount: 100000,
-      commentCount: 33333,
-    };
+  getPosts(): PostModel[] {
+    return posts;
   }
 
+  /**
+   * @method GET /posts/:id
+   * id에 해당되는 post를 가져온다.
+   */
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  getPost(@Param('id') id: string) {
+    const post = posts.find((post) => post.id === +id);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    return post;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
-  }
+  /**
+   * 3) POST /posts
+   * post를 생성한다.
+   */
 }
