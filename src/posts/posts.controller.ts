@@ -1,4 +1,12 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 
 interface PostModel {
@@ -43,7 +51,7 @@ export class PostsController {
 
   /**
    * @method GET /posts
-   *  모든 posts를 다 가져온다.
+   * @description 모든 posts를 다 가져온다.
    */
   @Get()
   getPosts(): PostModel[] {
@@ -52,7 +60,7 @@ export class PostsController {
 
   /**
    * @method GET /posts/:id
-   * id에 해당되는 post를 가져온다.
+   * @description id에 해당되는 post를 가져온다.
    */
   @Get(':id')
   getPost(@Param('id') id: string) {
@@ -66,7 +74,30 @@ export class PostsController {
   }
 
   /**
-   * 3) POST /posts
-   * post를 생성한다.
+   * @method POST /posts
+   * @description post를 생성한다.
    */
+  @Post()
+  postPosts(
+    @Body('author') author: string,
+    @Body('title') title: string,
+    @Body('content') content: string,
+  ) {
+    if (!author || !title || !content) {
+      throw new BadRequestException();
+    }
+
+    const post: PostModel = {
+      id: posts.length + 1,
+      author,
+      title,
+      content,
+      likeCount: 0,
+      commentCount: 0,
+    };
+
+    posts.push(post);
+
+    return post;
+  }
 }
