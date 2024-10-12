@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -66,9 +67,7 @@ export class PostsController {
   getPost(@Param('id') id: string) {
     const post = posts.find((post) => post.id === +id);
 
-    if (!post) {
-      throw new NotFoundException();
-    }
+    if (!post) throw new NotFoundException();
 
     return post;
   }
@@ -78,14 +77,12 @@ export class PostsController {
    * @description post를 생성한다.
    */
   @Post()
-  postPosts(
+  postPost(
     @Body('author') author: string,
     @Body('title') title: string,
     @Body('content') content: string,
   ) {
-    if (!author || !title || !content) {
-      throw new BadRequestException();
-    }
+    if (!author || !title || !content) throw new BadRequestException();
 
     const post: PostModel = {
       id: posts.length + 1,
@@ -99,5 +96,35 @@ export class PostsController {
     posts.push(post);
 
     return post;
+  }
+
+  /**
+   * @method PATCH /posts/:id
+   * @description id에 해당되는 Posts를 변경한다.
+   */
+  @Patch(':id')
+  patchPost(
+    @Param('id') id: string,
+    @Body('author') author?: string,
+    @Body('title') title?: string,
+    @Body('content') content?: string,
+  ) {
+    const target = posts.find((post) => post.id === +id);
+
+    if (!target) throw new NotFoundException();
+
+    if (author) {
+      target.author = author;
+    }
+
+    if (title) {
+      target.title = title;
+    }
+
+    if (content) {
+      target.content = content;
+    }
+
+    return target;
   }
 }
