@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -19,7 +20,7 @@ interface PostModel {
   commentCount: number;
 }
 
-const posts: PostModel[] = [
+let posts: PostModel[] = [
   {
     id: 1,
     author: 'newjeans_official',
@@ -126,5 +127,20 @@ export class PostsController {
     }
 
     return target;
+  }
+
+  /**
+   * @method DELETE /post/:id
+   */
+
+  @Delete(':id')
+  deletePost(@Param('id') id: string) {
+    const deleteTarget = posts.find((post) => post.id === +id);
+
+    if (!deleteTarget) throw new NotFoundException();
+
+    posts = posts.filter((post) => post.id !== +id);
+
+    return id;
   }
 }
