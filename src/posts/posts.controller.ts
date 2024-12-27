@@ -7,7 +7,8 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { PostModel, PostsService } from './posts.service';
+import { PostsService } from './posts.service';
+import { PostModel } from './entities/post.entity';
 
 @Controller('posts')
 export class PostsController {
@@ -18,8 +19,8 @@ export class PostsController {
    * @description 모든 posts를 다 가져온다.
    */
   @Get()
-  getPosts(): PostModel[] {
-    return this.postsService.findAllPosts();
+  getPosts(): Promise<PostModel[]> {
+    return this.postsService.getAllPosts();
   }
 
   /**
@@ -28,7 +29,7 @@ export class PostsController {
    */
   @Get(':id')
   getPost(@Param('id') id: string) {
-    return this.postsService.findPostById(+id);
+    return this.postsService.getPostById(+id);
   }
 
   /**
@@ -37,11 +38,11 @@ export class PostsController {
    */
   @Post()
   postPost(
-    @Body('author') author: string,
+    @Body('authorId') authorID: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ) {
-    return this.postsService.createPost(author, title, content);
+    return this.postsService.createPost(authorID, title, content);
   }
 
   /**

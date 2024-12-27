@@ -3,6 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PostModel } from './posts/entities/post.entity';
+import { UsersModule } from './users/users.module';
+import { UserModel } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -15,10 +18,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      entities: [],
+      entities: [PostModel, UserModel],
       // Nestjs에서 작성하는 TypeOrm코드와 DB의 싱크를 자동으로 맞출 것인지에 대한 여부 (DEV에서만 true)
-      synchronize: process.env.DB_TYPEORM_SYNC === 'true',
+      synchronize: true,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
