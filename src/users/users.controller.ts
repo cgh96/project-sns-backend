@@ -10,12 +10,17 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-  @Post()
-  postUser(
-    @Body('nickname') nickname: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ) {
-    return this.usersService.createUser(nickname, email, password);
-  }
+  /** 사용자 생성은 auth에서 인증을 통해야만 가능 */
+  // @Post()
+  // postUser(
+  //   @Body('nickname') nickname: string,
+  //   @Body('email') email: string,
+  //   @Body('password') password: string,
+  // ) {
+  //   return this.usersService.createUser({
+  //     nickname,
+  //     email,
+  //     password,
+  //   });
+  // }
 }
